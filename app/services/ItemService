@@ -1,0 +1,11 @@
+package services;
+
+import models.ItemModel;
+import play.libs.F;
+
+public class ItemService {
+
+    public F.Promise<ItemModel> get(Long id) {
+        return F.Promise.pure(new ItemModel(id));
+    }
+}
