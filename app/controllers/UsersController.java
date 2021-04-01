@@ -29,7 +29,7 @@ public class UsersController extends Controller {
         // TODO: obtener datos de usuario e items de usuario en forma paralela  (opcional en forma paralela)
         // TODO: devolver un UserInfoDto con la información obtenida
         return usersService.getUser(userId)
-            .map(userModel -> itemsService.getUserItems(userId)
+            .flatMap(userModel -> itemsService.getUserItems(userId)
                 .map(itemModels -> {
                     UserInfoDto userInfoDto = new UserInfoDto();
 
