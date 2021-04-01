@@ -1,18 +1,17 @@
 package controllers;
 
-import play.*;
 import play.libs.F;
 import play.libs.Json;
 import play.mvc.*;
-import services.ItemService;
+import services.ItemsService;
 
-public class Items extends Controller {
+public class ItemsController extends Controller {
 
-    public ItemService itemService;
+    public ItemsService itemsService;
 
-    public F.Promise<Result> get(Long id) {
+    public F.Promise<Result> get(long id) {
 
-        return itemService.get(id)
+        return itemsService.get(id)
             .map(itemModel -> Results.ok(Json.toJson(itemModel)));
     }
 
@@ -20,11 +19,11 @@ public class Items extends Controller {
         return F.Promise.pure(Results.ok("Post: It works!"));
     }
 
-    public F.Promise<Result> put(Long id) {
+    public F.Promise<Result> put(long id) {
         return F.Promise.pure(Results.ok("Put: It works!"));
     }
 
-    public F.Promise<Result> delete(Long id) {
+    public F.Promise<Result> delete(long id) {
         return F.Promise.pure(Results.ok("Delete: It works!"));
     }
 
