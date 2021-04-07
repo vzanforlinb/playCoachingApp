@@ -8,4 +8,3 @@ PUT     /items/:id                  @controllers.ItemsController.put(id: Long)
 DELETE  /items/:id                  @controllers.ItemsController.delete(id: Long)
 
 GET     /users/:id/items            @controllers.UsersController.getUserInfo(id: Long)
-
