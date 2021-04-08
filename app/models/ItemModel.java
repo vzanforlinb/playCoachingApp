@@ -1,11 +1,19 @@
 package models;
 
-public class ItemModel {
-    public long id;
-    public String title;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-    public ItemModel(long id, String title) {
-        this.id = id;
-        this.title = title;
-    }
+@Entity
+@Table(name = "ITEMS")
+public class ItemModel {
+    @Id
+    @GeneratedValue // bd
+    public long id;
+    @Column(name = "title")
+    public String title;
+    public int quantity;
+    public double price;
 }

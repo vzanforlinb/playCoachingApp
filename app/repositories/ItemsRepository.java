@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import dtos.ItemsResponseDto;
+import play.db.jpa.JPA;
 import play.libs.F;
 import play.libs.WS;
 
@@ -39,5 +40,19 @@ public class ItemsRepository {
                 return objectMapper.readValue(response.getBody(), ItemsResponseDto.class);
             }
         );
+    }
+
+    public F.Promise<Void> createTable() {
+        try {
+            // TODO: revisar en que thread pool se ejecuta este codigo
+            return F.Promise.promise(() -> {
+                JPA.withTransaction(() -> JPA.em()
+                    .createNativeQuery("CREATE TABLE IF NOT EXISTS ITEMS (id BIGINT auto_increment,title VARCHAR(30),price DOUBLE,quantity INT)")
+                    .executeUpdate());
+                return null;
+            });
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
     }
 }
