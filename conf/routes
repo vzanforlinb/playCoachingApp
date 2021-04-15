@@ -9,3 +9,5 @@ DELETE  /items/:id                  @controllers.ItemsController.delete(id: Long
 GET     /test                       @controllers.ItemsController.test()
 
 GET     /users/:id/items            @controllers.UsersController.getUserInfo(id: Long)
+
+GET     /test/parallel/:siteId/:userId      @controllers.UsersController.testParallel(siteId: String, userId: Long)

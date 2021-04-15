@@ -1,19 +1,30 @@
 package controllers;
 
+import akka.dispatch.ExecutionContexts;
 import dtos.ItemDto;
 import dtos.UserInfoDto;
 import mappers.ItemMapper;
+import models.CategoryModel;
 import models.ItemModel;
+import models.UserModel;
+import play.Logger;
 import play.libs.F;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Results;
+import repositories.CategoriesRepository;
 import repositories.ItemsRepository;
 import repositories.UsersRepository;
+import scala.concurrent.ExecutionContext;
+import services.CategoriesService;
 import services.ItemsService;
 import services.UsersService;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 public class UsersController extends Controller {
@@ -21,6 +32,7 @@ public class UsersController extends Controller {
 
     public ItemsService itemsService;
     public UsersService usersService;
+    public CategoriesService categoriesService;
     public UsersRepository usersRepository;
     public ItemsRepository itemsRepository;
     public ItemMapper itemMapper;
@@ -29,6 +41,7 @@ public class UsersController extends Controller {
     public UsersController() {
         this.itemsService = new ItemsService();
         this.usersService = new UsersService();
+        this.categoriesService = new CategoriesService();
         this.usersRepository = new UsersRepository();
         this.itemsRepository = new ItemsRepository();
         this.itemMapper = new ItemMapper();
@@ -73,6 +86,24 @@ public class UsersController extends Controller {
                     return userInfoDto;
                 }))
             .map(userInfoDto -> Results.ok(Json.toJson(userInfoDto)));
+    }
+
+    public F.Promise<Result> testParallel(String siteId, long userId) {
+        Logger.info("testParallel init: " + Thread.currentThread().getId());
+
+        F.Promise<List<CategoryModel>> siteCategoriesPromise = categoriesService.getSiteCategories(siteId);
+        F.Promise<UserModel> userPromise = usersService.getUser(userId);
+        ExecutorService computationExecutorService = Executors.newFixedThreadPool(1); // thread pool = ExecutorService
+        ExecutorService ioExecutorService = Executors.newFixedThreadPool(9999);
+        ExecutionContext executionContext = ExecutionContexts.fromExecutorService(computationExecutorService); // ExecutionContext = ExecutorService
+        return F.Promise.sequence(Arrays.asList(siteCategoriesPromise,userPromise),executionContext)
+            .map(objects -> {
+                List<CategoryModel> siteCategories = (List<CategoryModel>) objects.get(0);
+                UserModel user = (UserModel) objects.get(1);
+                Logger.info("testParallel end: " + Thread.currentThread().getId());
+
+                return Results.ok("");
+            });
     }
 
     private ItemDto itemMapper2(ItemModel itemModel) {
