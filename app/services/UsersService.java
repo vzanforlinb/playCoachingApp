@@ -6,13 +6,17 @@ import play.Logger;
 import play.libs.F;
 import repositories.UsersRepository;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class UsersService {
 
     private UsersRepository usersRepository;
 
-    // TODO: inyecciones
-    public UsersService() {
-        this.usersRepository = new UsersRepository();
+    @Inject
+    public UsersService(UsersRepository usersRepository) {
+        this.usersRepository = usersRepository;
     }
 
     public F.Promise<UserModel> getUser(long id) {

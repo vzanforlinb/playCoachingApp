@@ -6,14 +6,19 @@ import play.mvc.*;
 import repositories.ItemsRepository;
 import services.ItemsService;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class ItemsController extends Controller {
 
     public ItemsService itemsService;
     public ItemsRepository itemsRepository;
 
-    public ItemsController() {
-        this.itemsRepository = new ItemsRepository();
-        this.itemsService = new ItemsService();
+    @Inject
+    public ItemsController(ItemsService itemsService, ItemsRepository itemsRepository) {
+        this.itemsRepository = itemsRepository;
+        this.itemsService = itemsService;
     }
 
     public F.Promise<Result> get(long id) {

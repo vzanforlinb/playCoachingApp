@@ -13,7 +13,6 @@ import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Results;
-import repositories.CategoriesRepository;
 import repositories.ItemsRepository;
 import repositories.UsersRepository;
 import scala.concurrent.ExecutionContext;
@@ -21,14 +20,16 @@ import services.CategoriesService;
 import services.ItemsService;
 import services.UsersService;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+@Singleton
 public class UsersController extends Controller {
-
 
     public ItemsService itemsService;
     public UsersService usersService;
@@ -37,15 +38,22 @@ public class UsersController extends Controller {
     public ItemsRepository itemsRepository;
     public ItemMapper itemMapper;
 
-    // TODO: Implementar injección de dependencias
-    public UsersController() {
-        this.itemsService = new ItemsService();
-        this.usersService = new UsersService();
-        this.categoriesService = new CategoriesService();
-        this.usersRepository = new UsersRepository();
-        this.itemsRepository = new ItemsRepository();
-        this.itemMapper = new ItemMapper();
+    @Inject
+    public UsersController(ItemsService itemsService,
+                           UsersService usersService,
+                           CategoriesService categoriesService,
+                           UsersRepository usersRepository,
+                           ItemsRepository itemsRepository,
+                           ItemMapper itemMapper) {
+
+        this.itemsService = itemsService;
+        this.usersService = usersService;
+        this.categoriesService = categoriesService;
+        this.usersRepository = usersRepository;
+        this.itemsRepository = itemsRepository;
+        this.itemMapper = itemMapper;
     }
+
     // TODO: agregar service (model)
     public F.Promise<Result> getUserInfo(long userId) {
         return usersRepository.get(userId)
@@ -96,7 +104,7 @@ public class UsersController extends Controller {
         ExecutorService computationExecutorService = Executors.newFixedThreadPool(1); // thread pool = ExecutorService
         ExecutorService ioExecutorService = Executors.newFixedThreadPool(9999);
         ExecutionContext executionContext = ExecutionContexts.fromExecutorService(computationExecutorService); // ExecutionContext = ExecutorService
-        return F.Promise.sequence(Arrays.asList(siteCategoriesPromise,userPromise),executionContext)
+        return F.Promise.sequence(Arrays.asList(siteCategoriesPromise, userPromise), executionContext)
             .map(objects -> {
                 List<CategoryModel> siteCategories = (List<CategoryModel>) objects.get(0);
                 UserModel user = (UserModel) objects.get(1);
