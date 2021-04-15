@@ -1,18 +1,24 @@
 package repositories;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import dtos.CategoryResponseDto;
 import play.libs.F;
 import play.libs.WS;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.Arrays;
 import java.util.List;
 
+@Singleton
 public class CategoriesRepository {
+
+    private ObjectMapper objectMapper;
+
+    @Inject
+    public CategoriesRepository(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     private final String BASE_URL = "https://internal-api.mercadolibre.com/sites/%s/categories";
     public static final String X_CALLER_SCOPES = "X-Caller-Scopes";
@@ -24,15 +30,7 @@ public class CategoriesRepository {
         requestHolder.setHeader(X_CALLER_SCOPES, ADMIN);
 
         return requestHolder.get().map(
-            response -> {
-                // TODO: Un ObjectMapper para el proyecto
-                ObjectMapper objectMapper = new ObjectMapper();
-                objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
-                objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-                return Arrays.asList(objectMapper.readValue(response.getBody(), CategoryResponseDto[].class)) ;
-            }
+            response -> Arrays.asList(objectMapper.readValue(response.getBody(), CategoryResponseDto[].class))
         );
     }
 

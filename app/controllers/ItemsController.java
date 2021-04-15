@@ -12,8 +12,8 @@ import javax.inject.Singleton;
 @Singleton
 public class ItemsController extends Controller {
 
-    public ItemsService itemsService;
-    public ItemsRepository itemsRepository;
+    private ItemsService itemsService;
+    private ItemsRepository itemsRepository;
 
     @Inject
     public ItemsController(ItemsService itemsService, ItemsRepository itemsRepository) {

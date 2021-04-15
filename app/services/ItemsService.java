@@ -4,10 +4,12 @@ import models.ItemModel;
 import play.db.jpa.JPA;
 import play.libs.F;
 
+import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
+@Singleton
 public class ItemsService {
 
     public F.Promise<ItemModel> get(long id) {
