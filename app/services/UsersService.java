@@ -13,17 +13,19 @@ import javax.inject.Singleton;
 public class UsersService {
 
     private UsersRepository usersRepository;
+    private Logger.ALogger logger;
 
     @Inject
-    public UsersService(UsersRepository usersRepository) {
+    public UsersService(UsersRepository usersRepository, Logger.ALogger logger) {
         this.usersRepository = usersRepository;
+        this.logger = logger;
     }
 
     public F.Promise<UserModel> getUser(long id) {
-        Logger.info("getUser init: " + Thread.currentThread().getId());
+        logger.info("getUser init: " + Thread.currentThread().getId());
 
         return usersRepository.get(id).map(userResponseDto -> {
-            Logger.info("getUser end: " + Thread.currentThread().getId());
+            logger.info("getUser end: " + Thread.currentThread().getId());
             return mapModel(userResponseDto);
         });
     }

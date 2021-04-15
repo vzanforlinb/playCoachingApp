@@ -15,17 +15,19 @@ import java.util.stream.Collectors;
 public class CategoriesService {
 
     private CategoriesRepository categoriesRepository;
+    private Logger.ALogger logger;
 
     @Inject
-    public CategoriesService(CategoriesRepository categoriesRepository) {
+    public CategoriesService(CategoriesRepository categoriesRepository, Logger.ALogger logger) {
         this.categoriesRepository = categoriesRepository;
+        this.logger = logger;
     }
 
     public F.Promise<List<CategoryModel>> getSiteCategories(String siteId) {
-        Logger.info("getCategories init: " + Thread.currentThread().getId());
+        logger.info("getCategories init: " + Thread.currentThread().getId());
         return categoriesRepository.get(siteId)
             .map(categoryResponseDtos -> {
-                    Logger.info("getCategories end: " + Thread.currentThread().getId());
+                    logger.info("getCategories end: " + Thread.currentThread().getId());
                     return categoryResponseDtos
                         .stream()
                         .map(this::mapModel)

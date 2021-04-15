@@ -37,7 +37,7 @@ public class UsersController extends Controller {
     private UsersRepository usersRepository;
     private ItemsRepository itemsRepository;
     private ItemMapper itemMapper;
-  //  private Logger.ALogger logger;
+    private Logger.ALogger logger;
 
     @Inject
     public UsersController(ItemsService itemsService,
@@ -45,17 +45,15 @@ public class UsersController extends Controller {
                            CategoriesService categoriesService,
                            UsersRepository usersRepository,
                            ItemsRepository itemsRepository,
-                           ItemMapper itemMapper//,
-                          // Logger.ALogger logger
-    ) {
-
+                           ItemMapper itemMapper,
+                           Logger.ALogger logger) {
         this.itemsService = itemsService;
         this.usersService = usersService;
         this.categoriesService = categoriesService;
         this.usersRepository = usersRepository;
         this.itemsRepository = itemsRepository;
         this.itemMapper = itemMapper;
-       // this.logger = logger;
+        this.logger = logger;
     }
 
     // TODO: agregar service (model)
@@ -101,8 +99,7 @@ public class UsersController extends Controller {
     }
 
     public F.Promise<Result> testParallel(String siteId, long userId) {
-     //   logger.info("testParallel init: " + Thread.currentThread().getId());
-        Logger.info("testParallel init: " + Thread.currentThread().getId());
+        logger.info("testParallel init: " + Thread.currentThread().getId());
 
         F.Promise<List<CategoryModel>> siteCategoriesPromise = categoriesService.getSiteCategories(siteId);
         F.Promise<UserModel> userPromise = usersService.getUser(userId);
@@ -113,8 +110,7 @@ public class UsersController extends Controller {
             .map(objects -> {
                 List<CategoryModel> siteCategories = (List<CategoryModel>) objects.get(0);
                 UserModel user = (UserModel) objects.get(1);
-              //  logger.info("testParallel end: " + Thread.currentThread().getId());
-                Logger.info("testParallel end: " + Thread.currentThread().getId());
+                logger.info("testParallel end: " + Thread.currentThread().getId());
 
                 return Results.ok("");
             });

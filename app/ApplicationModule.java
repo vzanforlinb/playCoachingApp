@@ -7,15 +7,11 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import play.Logger;
-import play.libs.WS;
 
 public class ApplicationModule extends AbstractModule {
 
     @Override
     public void configure() {
-    //    bind(Logger.class).to(Logger.class).asEagerSingleton();
-    //    bind(WS.class).to(WS.class).asEagerSingleton();
-        bind(ObjectMapper.class).toProvider(this::provideObjectMapper);
     }
 
     @Singleton
@@ -33,6 +29,6 @@ public class ApplicationModule extends AbstractModule {
     @Singleton
     @Provides
     protected Logger.ALogger provideLogger() {
-      return   new Logger.ALogger(play.api.Logger.apply("application"));
+        return new Logger.ALogger(play.api.Logger.apply("application"));
     }
 }
