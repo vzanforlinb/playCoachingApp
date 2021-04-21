@@ -1,15 +1,15 @@
 package mappers;
 
-import dtos.ItemDto;
 import dtos.ItemsResponseDto;
+import models.ItemRModel;
 
 public class ItemMapper {
 
-    public ItemDto buildFromDto(ItemsResponseDto.ItemResponseDto itemResponseDto) {
-        ItemDto itemDto = new ItemDto();
-        itemDto.id = itemResponseDto.id;
-        itemDto.title = itemResponseDto.title;
+    public ItemRModel buildFromDto(ItemsResponseDto.ItemResponseDto itemResponseDto) {
+        ItemRModel itemModel = new ItemRModel();
+        itemModel.id = itemResponseDto.id;
+        itemModel.title = itemResponseDto.title;
 
-        return itemDto;
+        return itemModel;
     }
 }

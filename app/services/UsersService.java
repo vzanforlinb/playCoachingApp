@@ -33,7 +33,13 @@ public class UsersService {
     private UserModel mapModel(UserResponseDto userResponseDto) {
         UserModel userModel = new UserModel();
         userModel.id = userResponseDto.id;
+        userModel.siteId = userResponseDto.siteId;
         userModel.name = String.format("%s %s", userResponseDto.firstName, userResponseDto.lastName);
+        userModel.firstName = userResponseDto.firstName;
+        userModel.lastName = userResponseDto.lastName;
+        userModel.nickname = userResponseDto.nickname;
+        userModel.permalink = userResponseDto.permalink;
+        userModel.userType = userResponseDto.userType;
         return userModel;
     }
 }

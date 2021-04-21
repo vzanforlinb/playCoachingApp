@@ -1,24 +1,40 @@
 package services;
 
+import mappers.ItemMapper;
 import models.ItemModel;
+import models.ItemRModel;
 import play.db.jpa.JPA;
 import play.libs.F;
+import repositories.ItemsRepository;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Singleton
 public class ItemsService {
+
+    private ItemsRepository itemsRepository;
+    private ItemMapper itemMapper;
+
+    @Inject
+    public ItemsService(ItemsRepository itemsRepository, ItemMapper itemMapper) {
+        this.itemsRepository = itemsRepository;
+        this.itemMapper = itemMapper;
+    }
 
     public F.Promise<ItemModel> get(long id) {
         return F.Promise.pure(new ItemModel());
     }
 
-    public F.Promise<List<ItemModel>> getUserItems(long userId) {
-        // TODO: Ir a la API de items y traer todos los items del user
-        return F.Promise.pure(new ArrayList<>());
+    public F.Promise<List<ItemRModel>> getUserItems(long userId, String siteId) {
+        return itemsRepository.get(userId, siteId).map(itemsResponseDto -> {
+            List<ItemRModel> itemModelList = itemsResponseDto.results.stream()
+                .map(itemResponseDto -> itemMapper.buildFromDto(itemResponseDto)).collect(Collectors.toList());
+            return itemModelList;
+        });
     }
 
     public F.Promise<Long> createItem() {
@@ -31,7 +47,7 @@ public class ItemsService {
                 item1.quantity = 10;
 
                 return JPA.withTransaction(() -> {
-                   EntityManager entityManager = JPA.em();
+                    EntityManager entityManager = JPA.em();
                     entityManager.persist(item1);
                     entityManager.flush();
                     return item1.id;
